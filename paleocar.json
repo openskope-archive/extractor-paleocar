@@ -1,0 +1,25 @@
+{
+  "@context": "https://openskope.org/paleoCAR",
+  "version": "1.0.0",
+  "model": "paleoCAR",
+  "image": "https://hub.docker.com/r/openskope/paleocar:1.0",
+  "title": "My Test One",
+  "description": "This describes the purpose of this model run.",
+  "tags": [
+    "This",
+    "That"
+  ],
+  "boundary": "http://skope.roger.ncsa.illinois.edu/clowder/api/files/3382283",
+  "inputs": [
+    "http://skope.roger.ncsa.illinois.edu/clowder/api/files/3382283",
+    "http://skope.roger.ncsa.illinois.edu/clowder/api/files/2222233",
+    "http://skope.roger.ncsa.illinois.edu/clowder/api/files/1122334"
+  ],
+  "outputs": [
+    "GDD_may_sep.tif",
+    "PPT_annual.tif",
+    "PPT_may_sept.tif",
+    "PPT_water_year.tif"
+  ]
+}
+
