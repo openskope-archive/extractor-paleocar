@@ -4,10 +4,15 @@
 
 import logging
 import subprocess
+import json
+import random
+import subprocess
+import stat
 
 from pyclowder.extractors import Extractor
-import pyclowder.api 
+import pyclowder.datasets 
 import pyclowder.files
+import pyclowder.clowder 
 import os
 
 
@@ -27,40 +32,47 @@ class Paleo(Extractor):
         logging.getLogger('pyclowder').setLevel(logging.DEBUG)
         logging.getLogger('__main__').setLevel(logging.DEBUG)
 
-
+        #Using the clowder module to directly interact with clowder
+        self.clowder = pyclowder.clowder.Clowder()
+        
+        
     """Tell the clowder not to download the file"""
-    def check_message(self, connector, host, secret_key, resource, parameters):
-        """The extractor to not download the file."""
-        return CheckMessage.bypass
+    # def check_message(self, connector, host, secret_key, resource, parameters):
+        # """The extractor to not download the file."""
+        # return CheckMessage.bypass
 
     
     def process_message(self, connector, host, secret_key, resource, parameters):
-        # Process the file and upload the results
+        #Get info from JSON model run request file
         logger = logging.getLogger(__name__)
         inputfile = resource["local_paths"][0]
         file_id = resource['id']
-        
-        clowder_base_url = os.environ.get('CLOWDER_URL', '') 
-        logger.debug("clowder base url is " + clowder_base_url)
-        # call actual program
-        # Assuming inputfile is actually a path
         with open(inputfile) as request_info: 
             data = json.load(request_info)
             #TODO: Need to perform error check
             title = data["title"] 
             logger.debug("Dataset names is " + title)
             result_names = data["outputs"]
+
+        #TODO: Error checking for already existed file 
+        #Create the model run job directory on the disk also in the clowder
         description = "this is a test purpose dataset"
+        uuid = self.clowder.create_dataset(title, description)
+        uuid = uuid['id']
+        result_dir = os.getcwd() + "/" + str(uuid)
+        if not os.path.isdir(result_dir):
+            os.makedirs(result_dir)
 
-        #TODO: we need some error checkings in here
-        uuid = pyclowder.api.create_dataset(clowder_base_url, title, description, secret_key = secret_key)
-        logger.debug("the uuid is " + str(uuid))
-        
+        #Call the actual model run program and put results into job dir
+        #and clowder(just path)
+        for result_file_name in result_names:
+            result_file_path = result_dir + "/" + result_file_name
+            logger.debug("Newly created file has path " + result_file_path)
+            with open(result_file_path, 'w+') as f:
+                for i in range(100):
+                    f.write(str(random.random()))
 
-        # For testing purpose
-
-
-        # store results as metadata
+        # store the results' metadata and push to clowder 
         # result = {
         # }
         #What is important here is the metadata
