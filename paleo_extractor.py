@@ -78,7 +78,6 @@ class Paleo(Extractor):
             self.clowder.add_file(title, result_file_path)
 
         #TODO:Store the results' metadata and push to clowder 
-
         # result = {
         # }
         #What is important here is the metadata
