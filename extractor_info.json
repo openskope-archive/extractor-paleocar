@@ -12,7 +12,9 @@
   },
   "process": {
     "file": [
-      "application/json"
+      "text/*",
+      "application/json",
+      "application/jsonld"
     ]
   },
   "external_services": [],

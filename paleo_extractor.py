@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-"""Example extractor based on the clowder code."""
-
-import logging
+"""Example extractor based on the clowder code.""" 
+import logging 
 import subprocess
 import json
 import random
@@ -43,6 +42,7 @@ class Paleo(Extractor):
 
     
     def process_message(self, connector, host, secret_key, resource, parameters):
+
         #Get info from JSON model run request file
         logger = logging.getLogger(__name__)
         inputfile = resource["local_paths"][0]
@@ -55,16 +55,16 @@ class Paleo(Extractor):
             result_names = data["outputs"]
 
         #TODO: Error checking for already existed file 
+        #Get the direcory addres from the JOBDIR environmental variable
         #Create the model run job directory on the disk also in the clowder
         description = "this is a test purpose dataset"
         uuid = self.clowder.create_dataset(title, description)
-        uuid = uuid['id']
-        result_dir = os.getcwd() + "/" + str(uuid)
+	uuid = uuid['id']
+        result_dir = os.environ.get("JOBDIR") + "/" + str(uuid)
         if not os.path.isdir(result_dir):
             os.makedirs(result_dir)
 
         #Call the actual model run program and put results into job dir
-        #and clowder(just path)
         for result_file_name in result_names:
             result_file_path = result_dir + "/" + result_file_name
             logger.debug("Newly created file has path " + result_file_path)
@@ -72,13 +72,18 @@ class Paleo(Extractor):
                 for i in range(100):
                     f.write(str(random.random()))
 
-        # store the results' metadata and push to clowder 
+        #Put module results to the clowder 
+        for result_file_name in result_names:
+            result_file_path = result_dir + "/" + result_file_name
+            self.clowder.add_file(title, result_file_path)
+
+        #TODO:Store the results' metadata and push to clowder 
+
         # result = {
         # }
         #What is important here is the metadata
         # metadata = self.get_metadata(result, 'file', file_id, host)
         # logger.debug(metadata)
-
         # upload metadata
         # pyclowder.files.upload_metadata(connector, host, secret_key, file_id, metadata)
 

@@ -1,4 +1,4 @@
-FROM clowder/pyclowder:2
+FROM pyclowder
 MAINTAINER Rob Kooper <kooper@illinois.edu>
 
 # Setup environment variables. These are passed into the container. You can change
@@ -13,7 +13,6 @@ ENV RABBITMQ_URI="amqp://rabbitmq:5672" \
     REGISTRATION_ENDPOINTS="http://clowder/extractors" \
     MAIN_SCRIPT="paleo_extractor.py"
 
-
 # Install any programs needed
 # RUN apt-get update && apt-get install -y \
 #        imagemagick \
@@ -24,5 +23,6 @@ USER clowder
 
 # command to run when starting docker
 COPY entrypoint.sh *.py extractor_info.json /home/clowder/
+
 ENTRYPOINT ["/home/clowder/entrypoint.sh"]
 CMD ["extractor"]
