@@ -47,6 +47,7 @@ class Paleo(Extractor):
         logger = logging.getLogger(__name__)
         inputfile = resource["local_paths"][0]
         file_id = resource['id']
+
         with open(inputfile) as request_info: 
             data = json.load(request_info)
             #TODO: Need to perform error check
@@ -63,7 +64,6 @@ class Paleo(Extractor):
         result_dir = os.environ.get("JOBDIR") + "/" + str(uuid)
         if not os.path.isdir(result_dir):
             os.makedirs(result_dir)
-
         #Call the actual model run program and put results into job dir
         for result_file_name in result_names:
             result_file_path = result_dir + "/" + result_file_name
@@ -71,7 +71,6 @@ class Paleo(Extractor):
             with open(result_file_path, 'w+') as f:
                 for i in range(100):
                     f.write(str(random.random()))
-
         #Put module results to the clowder 
         for result_file_name in result_names:
             result_file_path = result_dir + "/" + result_file_name
